@@ -1,0 +1,85 @@
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <vector>
+
+using namespace std;
+
+class Gadget{
+    public:
+        string category;
+        string brand;
+        string model;
+        double price;
+        int stock;
+
+    Gadget(
+        string c, 
+        string b, 
+        string m, 
+        double pr, 
+        int stk
+        ): category(c), brand(b), model(m), price(pr), stock(stk) {};
+    
+    friend ostream& operator<<(ostream& os, const Gadget& dt);
+};
+
+ostream& operator<<(ostream& os, const Gadget& gadget)
+{
+    os << std::setfill (' ') << left << std::setw (20);
+    os << gadget.category;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << gadget.brand;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << gadget.model;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << gadget.price;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << gadget.stock << endl;
+    return os;
+}
+
+
+vector<Gadget> loadInventory(){
+
+    vector<Gadget> gadgets;
+    std::ifstream ifs("z-kart_db.txt", std::ifstream::in);
+    // ifs.open("zusers_db.txt", std::ifstream::in);
+
+    while(!ifs.eof()){
+        string category;
+        string brand;
+        string model;
+        double price;
+        int stock;
+        ifs >> category >> brand >> model >> price >> stock;
+        auto g1 = Gadget(category, brand, model, price, stock);
+        gadgets.push_back(g1);
+    }
+    ifs.close();
+    return gadgets;
+}
+
+void listGadgets(vector<Gadget> gds){
+    cout << std::setfill('-') << left << std::setw(100);
+    cout << "" << endl;
+    cout << std::setfill(' ') << left << std::setw(20);
+    cout << "Category";
+    cout << std::setfill(' ') << left << std::setw(20);
+    cout << "Brand";
+    cout << std::setfill(' ') << left << std::setw(20);
+    cout << "Model";
+    cout << std::setfill(' ') << left << std::setw(20);
+    cout << "Price";
+    cout << std::setfill(' ') << left << std::setw(20);
+    cout << "Stock" << endl;
+    cout << std::setfill('-') << left << std::setw(100);
+    cout << "" << endl;
+    int index = 1;
+    for(auto gd: gds){
+        cout << index++ << "  " << gd;
+    }
+    cout << std::setfill('-') << left << std::setw(100);
+    cout << "" << endl;
+}

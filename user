@@ -1,0 +1,97 @@
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <vector>
+
+using namespace std;
+
+class User{
+    public:
+
+        string name;
+        string email;
+        string pass;
+        bool admin = false;
+        long mobile;
+
+    User(string n, string e, string p, long m = 0): name(n), email(e), pass(p), mobile(m){}
+    
+    friend ostream& operator<<(ostream& os, const User& dt);
+};
+
+ostream& operator<<(ostream& os, const User& user)
+{
+    os << std::setfill (' ') << left << std::setw (20);
+    os << user.email;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << user.pass;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << user.name;
+    os << std::setfill (' ') << left << std::setw (20);
+    os << user.mobile << endl;
+    return os;
+}
+
+
+vector<User> loadUsers(){
+
+    vector<User> users;
+    std::ifstream ifs("zusers_db.txt", std::ifstream::in);
+    // ifs.open("zusers_db.txt", std::ifstream::in);
+
+    auto adminUser = User("Admin" ,"admin@zoho.com", "xyzzy");
+    adminUser.admin = true;
+    users.push_back(adminUser);
+
+    while(!ifs.eof()){
+        char name[256];
+        char email[256];
+        char pass[20];
+        long mobile;
+        ifs >> email >> pass >> name >> mobile;
+        auto u1 = User(name, email, pass, mobile);
+        users.push_back(u1);
+    }
+    ifs.close();
+    return users;
+}
+
+User addUser(string email, string pass){
+    string name;
+    long mobile;
+    ofstream file("zusers_db.txt", ios::app);
+
+    cout << "Enter your Name: ";
+    cin >> name;
+    cout << "Enter your mobile number: ";
+    cin >> mobile;
+
+    file << "\n" << email << " " << pass << " " << name << " " << mobile;
+    auto nuser = User(name, email, pass, mobile);
+    file.close();
+    return nuser;
+}
+
+string encrypt(string pass){
+    string epass;
+    for ( string::iterator itr = pass.begin(); itr != pass.end(); itr++){
+        epass += ((char)*itr) + pass.size();
+    }
+    return epass;
+}
+
+tuple<string, string> getUser(map<string, int>){
+    string username;
+    string password;
+
+    cout << "Login" << endl;
+    cout << "Enter Username/Email: ";
+    cin >> username;
+
+    cout << "Enter password: ";
+    cin >> password;
+    password = encrypt(password);
+
+    return make_tuple(username, password);
+}
